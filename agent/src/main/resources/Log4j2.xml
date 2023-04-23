@@ -68,13 +68,6 @@
         2. root配置日志的根节点
         -->
 
-        <!-- 同步日志配置-->
-        <log name="com.sky.hello.mapper" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
-            <AppenderRef ref="RollingFile"/>
-            <AppenderRef ref="RollingFileError"/>
-        </log>
-
         <root level="debug">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>

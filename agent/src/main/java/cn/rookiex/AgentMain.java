@@ -1,9 +1,7 @@
 package cn.rookiex;
 
+import cn.rookiex.file.AgentFileTools;
 import lombok.extern.log4j.Log4j2;
-import cn.rookiex.file.DiffClassFinder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
@@ -14,16 +12,22 @@ import java.util.Map;
 /**
  * @author rookieX 2023/4/20
  */
+@Log4j2
 public class AgentMain {
 
-    private static final Logger log = LogManager.getLogger(AgentMain.class);
 
     public static void agentmain(String args, Instrumentation inst) {
-        DiffClassFinder diffClassFinder = new DiffClassFinder();
-        Map<String, byte[]> diffClass = diffClassFinder.findDiffClass("bin", "agent");
-        System.out.println(diffClass.keySet());
-
-        reload(inst, diffClass);
+        String path = "agent";
+        if (args != null){
+            path = args;
+        }
+        Map<String, byte[]> findClass = AgentFileTools.findClass(path);
+        if (findClass != null && !findClass.isEmpty()) {
+            log.info("hot agent path {} , class : {}", path, findClass.keySet());
+            reload(inst, findClass);
+        }else {
+            log.error("hot agent class fail ,path is empty : {} ", path);
+        }
     }
 
 
@@ -39,12 +43,22 @@ public class AgentMain {
             }
         }
 
-        try {
-            if (definitions.isEmpty()) {
-                log.error("These classes are not found in the JVM and may not be loaded: " + bytesMap.keySet());
-                return;
+        if (definitions.isEmpty()) {
+            log.error("These classes are not found in the JVM and may not be loaded: {}" , bytesMap.keySet());
+            return;
+        }
+
+        if (redefineModel.size() != bytesMap.size()) {
+            for (String s : redefineModel) {
+                bytesMap.remove(s);
             }
+            log.error("These classes are not found in the JVM and may not be loaded: {}" , bytesMap.keySet());
+            return;
+        }
+
+        try {
             inst.redefineClasses(definitions.toArray(new ClassDefinition[0]));
+            log.info("redefine class finish: {}", redefineModel);
         } catch (Throwable e) {
             String message = "redefine error! " + e;
             log.error(message, e);

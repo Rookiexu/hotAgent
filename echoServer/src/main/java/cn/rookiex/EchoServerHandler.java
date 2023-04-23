@@ -17,7 +17,6 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String s = ((ByteBuf) msg).toString(Charset.defaultCharset());
-        s += " Server tag";
         ctx.write(Unpooled.wrappedBuffer(s.getBytes()));
     }
 
