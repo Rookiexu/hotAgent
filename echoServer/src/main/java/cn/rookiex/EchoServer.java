@@ -13,6 +13,7 @@ import io.netty.handler.logging.LoggingHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.FileWriter;
 import java.lang.management.ManagementFactory;
 
 /**
@@ -22,6 +23,13 @@ public final class EchoServer {
 
     private static final Logger log = LogManager.getLogger(EchoServer.class);
     public static void main(String[] args) throws Exception {
+        // 保存进程Id
+        String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+        try (FileWriter writer = new FileWriter("server.pid")) {
+            writer.write(pid);
+            writer.flush();
+        }
+
         String name = ManagementFactory.getRuntimeMXBean().getName();
         log.info("server start, name : {}", name);
 
@@ -31,7 +39,6 @@ public final class EchoServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(workerGroup)
              .channel(NioServerSocketChannel.class)
-             .handler(new LoggingHandler(LogLevel.INFO))
              .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
