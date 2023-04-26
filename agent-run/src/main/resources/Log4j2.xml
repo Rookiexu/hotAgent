@@ -28,7 +28,7 @@
             <!--输出日志的格式, 不设置默认为:%m%n-->
             <PatternLayout pattern="${PATTERN_FILE}"/>
             <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
-            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
             <!--归档设置-->
             <Policies>
                 <!--按时间间隔归档:
@@ -68,7 +68,7 @@
         2. root配置日志的根节点
         -->
 
-        <root level="debug">
+        <root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="RollingFileError"/>

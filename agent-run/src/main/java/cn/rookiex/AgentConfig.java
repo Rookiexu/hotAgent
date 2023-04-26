@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
@@ -46,7 +47,7 @@ public class AgentConfig {
         if (FileUtil.exist(pidPath)) {
             String s = FileUtil.readString(pidPath, Charset.defaultCharset());
             String[] split = s.split("\\.");
-            if (split.length < 1){
+            if (split.length < 1) {
                 log.error("cat not pid , path : {}, value : {}", pidPath, s);
                 System.exit(-1);
             }
@@ -65,12 +66,46 @@ public class AgentConfig {
 
     public static void initConfig(String path) {
         Properties properties = new Properties();
+        path = checkPropertyPath(path);
+        System.out.println(path);
         try {
-            properties.load(AgentConfig.class.getClassLoader().getResourceAsStream(path));
+            properties.load(FileUtil.getInputStream(path));
             initProperties(properties);
         } catch (IOException | IllegalAccessException e) {
             log.error(e, e);
         }
+    }
+
+    private static String checkPropertyPath(String path) {
+        String newPath = path;
+        boolean exist = FileUtil.exist(newPath);
+        if (exist) {
+            return newPath;
+        }
+        newPath = "config" + FileUtil.FILE_SEPARATOR + path;
+        exist = FileUtil.exist(newPath);
+        if (exist) {
+            return newPath;
+        }
+
+
+        URL resource = AgentConfig.class.getResource("/");
+        if (resource != null) {
+            String resourcePath = resource.getPath();
+            newPath = resourcePath + FileUtil.FILE_SEPARATOR + path;
+            exist = FileUtil.exist(newPath);
+            if (exist) {
+                return newPath;
+            }
+
+            newPath = resourcePath + FileUtil.FILE_SEPARATOR + "config" + FileUtil.FILE_SEPARATOR + path;
+            exist = FileUtil.exist(newPath);
+            if (exist) {
+                return newPath;
+            }
+        }
+
+        return path;
     }
 
     private static void initProperties(Properties properties) throws IllegalAccessException {

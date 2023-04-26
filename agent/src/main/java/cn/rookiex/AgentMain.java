@@ -1,7 +1,5 @@
 package cn.rookiex;
 
-import cn.rookiex.file.AgentFileTools;
-import lombok.extern.log4j.Log4j2;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
@@ -12,7 +10,6 @@ import java.util.Map;
 /**
  * @author rookieX 2023/4/20
  */
-@Log4j2
 public class AgentMain {
 
 
@@ -23,10 +20,10 @@ public class AgentMain {
         }
         Map<String, byte[]> findClass = AgentFileTools.findClass(path);
         if (findClass != null && !findClass.isEmpty()) {
-            log.info("hot agent path {} , class : {}", path, findClass.keySet());
+            System.out.println("hot agent path {"+path+"} , class : {"+findClass.keySet()+"}");
             reload(inst, findClass);
         }else {
-            log.error("hot agent class fail ,path is empty : {} ", path);
+            System.out.println("err ==> " +"hot agent class fail ,path is empty : {"+path+"} ");
         }
     }
 
@@ -39,12 +36,12 @@ public class AgentMain {
 
                 definitions.add(new ClassDefinition(clazz, bytesMap.get(clazz.getName())));
                 redefineModel.add(clazz.getName());
-                log.info("Try redefine class name: {}, ClassLoader: {}", clazz.getName(), clazz.getClassLoader());
+                System.out.println("Try redefine class name: {"+clazz.getName()+"}, ClassLoader: {"+clazz.getClassLoader()+"}");
             }
         }
 
         if (definitions.isEmpty()) {
-            log.error("These classes are not found in the JVM and may not be loaded: {}" , bytesMap.keySet());
+            System.out.println("err ==> " +"These classes are not found in the JVM and may not be loaded: {"+bytesMap.keySet()+"}");
             return;
         }
 
@@ -52,16 +49,16 @@ public class AgentMain {
             for (String s : redefineModel) {
                 bytesMap.remove(s);
             }
-            log.error("These classes are not found in the JVM and may not be loaded: {}" , bytesMap.keySet());
+            System.out.println("err ==> " +"These classes are not found in the JVM and may not be loaded: {"+bytesMap.keySet()+"}");
             return;
         }
 
         try {
             inst.redefineClasses(definitions.toArray(new ClassDefinition[0]));
-            log.info("redefine class finish: {}", redefineModel);
+            System.out.println("redefine class finish: {"+redefineModel+"}");
         } catch (Throwable e) {
             String message = "redefine error! " + e;
-            log.error(message, e);
+            System.out.println("err ==> " + message + e.toString());
         }
     }
 }

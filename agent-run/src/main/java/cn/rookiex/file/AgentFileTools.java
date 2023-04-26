@@ -9,8 +9,6 @@ import org.objectweb.asm.ClassReader;
 import java.io.File;
 import java.util.*;
 
-import static cn.rookiex.AgentConfig.MAX_FILE_SIZE;
-
 
 /**
  * @author rookieX 2023/4/20
@@ -122,8 +120,8 @@ public class AgentFileTools {
             return true;
         }
 
-        if (!file.isDirectory() && file.length() >= MAX_FILE_SIZE) {
-            log.error("file size: " + file.length() + " >= " + MAX_FILE_SIZE + ", path: " + srcPath);
+        if (!file.isDirectory() && file.length() >= 1024 * 1024) {
+            log.error("file size: " + file.length() + " >= " + 1024 * 1024 + ", path: " + srcPath);
             return true;
         }
         return false;

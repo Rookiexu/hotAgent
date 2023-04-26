@@ -11,6 +11,7 @@
     <modules>
         <module>echoServer</module>
         <module>agent</module>
+        <module>agent-run</module>
     </modules>
 
     <properties>
