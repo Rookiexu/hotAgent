@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: xu.zhishun
+Class-Path: config/ lib/lombok-1.18.26.jar lib/log4j-slf4j-impl-2.20.0
+ .jar lib/log4j-api-2.20.0.jar lib/slf4j-api-1.7.25.jar lib/log4j-core
+ -2.20.0.jar lib/hutool-all-5.8.16.jar lib/asm-9.4.jar lib/tools-1.8.0.jar
+Created-By: Apache Maven 3.8.1
+Build-Jdk: 1.8.0_144
+Main-Class: Main
