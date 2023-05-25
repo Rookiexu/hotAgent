@@ -1,6 +1,10 @@
 package cn.rookiex;
 
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
@@ -14,9 +18,13 @@ public class AgentMain {
 
 
     public static void agentmain(String args, Instrumentation inst) {
+        System.out.println("start hot agent code args : " + args);
         String path = "agent";
         if (args != null){
-            path = args;
+            JSONObject entries = JSONUtil.parseObj(args);
+            if (entries.containsKey("path")){
+                path = entries.getStr("path");
+            }
         }
         Map<String, byte[]> findClass = AgentFileTools.findClass(path);
         if (findClass != null && !findClass.isEmpty()) {

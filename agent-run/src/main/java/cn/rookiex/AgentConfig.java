@@ -6,7 +6,6 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Properties;
 
 /**
@@ -14,29 +13,30 @@ import java.util.Properties;
  */
 @Log4j2
 public class AgentConfig {
-    public static String serverPid;
+
+    public static boolean isInit;
 
     public static String pidPath;
 
     /**
      * agent.jar 文件路径
      */
-    public static String jarPath = "";
+    public static String agentJarPath = "";
 
     /**
      * 对比差异的源代码路径
      */
-    public static String srcPath = "oldClass";
+    public static String srcClassPath = "oldClass";
 
     /**
      * 对比差异的心代码路径
      */
-    public static String newtPath = "newClass";
+    public static String newClassPath = "newClass";
 
     /**
      * 热更文件路径
      */
-    public static String agentPath = "agent";
+    public static String agentClassPath = "agent";
 
 
     public static long MAX_FILE_SIZE = 1024 * 1024;
@@ -44,24 +44,7 @@ public class AgentConfig {
     public static void initConfig() {
         initConfig("agent.properties");
 
-        if (FileUtil.exist(pidPath)) {
-            String s = FileUtil.readString(pidPath, Charset.defaultCharset());
-            String[] split = s.split("\\.");
-            if (split.length < 1) {
-                log.error("cat not pid , path : {}, value : {}", pidPath, s);
-                System.exit(-1);
-            }
-            serverPid = split[0];
-            if (serverPid == null) {
-                log.error("cat not pid , path : {}", pidPath);
-                System.exit(-1);
-            }
 
-            log.info("load pid:" + serverPid);
-        } else {
-            log.error("can not fid server pid, path {}", pidPath);
-            System.exit(-1);
-        }
     }
 
     public static void initConfig(String path) {
@@ -71,6 +54,7 @@ public class AgentConfig {
         try {
             properties.load(FileUtil.getInputStream(path));
             initProperties(properties);
+            isInit = true;
         } catch (IOException | IllegalAccessException e) {
             log.error(e, e);
         }

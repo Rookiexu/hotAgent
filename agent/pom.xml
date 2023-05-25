@@ -44,6 +44,7 @@
                         </manifest>
                         <manifestEntries>
                             <Agent-Class>cn.rookiex.AgentMain</Agent-Class>
+                            <Can-Redefine-Classes>true</Can-Redefine-Classes>
                         </manifestEntries>
                     </archive>
                     <excludes>
